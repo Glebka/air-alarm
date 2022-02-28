@@ -1,0 +1,25 @@
+.global-icons {
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
+@keyframes redAlert {
+  0% {
+    color: rgb(133, 87, 87);
+  }
+  100% {
+    color: red;
+  }
+}
+
+.red-alert {
+  color: red;
+  animation-name: redAlert;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+.clickable-icon {
+  cursor: pointer;
+  font-size: 1.5rem;
+}

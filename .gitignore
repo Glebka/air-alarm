@@ -1,1 +1,4 @@
+.webpack/
+dist/
 node_modules/
+*.log
