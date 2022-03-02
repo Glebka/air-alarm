@@ -2,23 +2,20 @@ import React from "react";
 
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 import { RiAlarmWarningFill } from "react-icons/ri";
-import { FcInfo } from "react-icons/fc";
-import { MdPlayCircleOutline } from "react-icons/md";
 import { BsInfoCircle } from "react-icons/bs";
 import { FaRunning } from "react-icons/fa";
-import { AiFillSafetyCertificate } from "react-icons/ai";
-
+import { AiFillSafetyCertificate, AiOutlineWarning } from "react-icons/ai";
 import "../css/styles.css";
+import { AlarmStatus } from "../redux/types";
+import { useAppSelector } from "../redux/hooks";
+import {
+  selectStatusCardData,
+  selectDataUpdatingStatus
+} from "../redux/AlarmStatusSlice";
 
-type StatusCardProps = {
-  alarm?: boolean;
-  title: string;
-  text: string;
-  lastUpdated: Date;
-};
-
-const StatusCardIcon = (props: { alarm: boolean }) => {
+const StatusCardIcon = (props: { status: AlarmStatus }) => {
   return (
     <div
       style={{
@@ -27,7 +24,7 @@ const StatusCardIcon = (props: { alarm: boolean }) => {
         justifyContent: "center"
       }}
     >
-      {props.alarm && (
+      {props.status === "alarm" && (
         <RiAlarmWarningFill
           className="red-alert"
           style={{
@@ -36,10 +33,19 @@ const StatusCardIcon = (props: { alarm: boolean }) => {
           }}
         />
       )}
-      {!props.alarm && (
+      {props.status === "all-clear" && (
         <AiFillSafetyCertificate
           style={{
             color: "green",
+            fontSize: "5rem",
+            justifyContent: "center"
+          }}
+        />
+      )}
+      {props.status === "undefined" && (
+        <AiOutlineWarning
+          style={{
+            color: "orange",
             fontSize: "5rem",
             justifyContent: "center"
           }}
@@ -68,19 +74,47 @@ const DismissButton = () => {
   );
 };
 
-const LastUpdatedInfo = (props: { date: Date }) => {
+const DismissNoInfoButton = () => {
   return (
-    <div style={{ fontSize: "0.7rem" }}>
-      <BsInfoCircle />
+    <>
+      <div
+        style={{
+          display: "flex",
+          alignContent: "center",
+          justifyContent: "center"
+        }}
+      >
+        <Button variant="primary">
+          <FaRunning />
+          Зрозуміло!
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const LastUpdatedInfo = (props: { date: Date }) => {
+  const isLoading = useAppSelector(selectDataUpdatingStatus);
+  return (
+    <div style={{ fontSize: "0.8rem" }}>
+      {!isLoading && <BsInfoCircle />}
+      {isLoading && (
+        <Spinner
+          style={{ marginRight: "0.3rem" }}
+          animation="border"
+          size="sm"
+        />
+      )}
       <i>Останнє оновлення {props.date.toLocaleString()}</i>
     </div>
   );
 };
 
-const StatusCard = (props: StatusCardProps) => {
+const StatusCard = () => {
+  const props = useAppSelector(selectStatusCardData);
   return (
-    <Card border={props.alarm ? "danger" : "primary"}>
-      <StatusCardIcon alarm={props.alarm || false} />
+    <Card border={props.status === "alarm" ? "danger" : "primary"}>
+      <StatusCardIcon status={props.status} />
       <Card.Body>
         <Card.Title
           style={{
@@ -92,10 +126,19 @@ const StatusCard = (props: StatusCardProps) => {
         >
           {props.title}
         </Card.Title>
-        <Card.Text>{props.text}</Card.Text>
-        {props.alarm && <DismissButton />}
+        <Card.Text
+          style={{
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center"
+          }}
+        >
+          {props.text}
+        </Card.Text>
+        {props.status === "alarm" && <DismissButton />}
+        {props.status === "undefined" && <DismissNoInfoButton />}
         <br />
-        <LastUpdatedInfo date={props.lastUpdated} />
+        <LastUpdatedInfo date={new Date(props.lastUpdated)} />
       </Card.Body>
     </Card>
   );

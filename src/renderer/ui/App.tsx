@@ -11,6 +11,7 @@ import AppNavbar from "./components/AppNavbar";
 import StatusCard from "./components/StatusCard";
 import SoundTest from "./components/SoundTest";
 import AppInfo from "./components/AppInfo";
+import SoundPlayer from "./components/SoundPlayer";
 
 const App = () => {
   return (
@@ -19,17 +20,12 @@ const App = () => {
       <Container>
         <Row>
           <Col>
-            <StatusCard
-              alarm
-              title="Відбій повітряної тривоги"
-              text="28 лютого 19:18 Відбій повітряної тривоги"
-              lastUpdated={new Date()}
-            />
+            <StatusCard />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Alert variant="info">
+            <Alert variant="info" style={{ marginTop: "1rem" }}>
               <FcInfo />
               Цей застосунок перевіряє останні новини щодо повітряної тривоги на
               офіційному сайті м. Одеса{" "}
@@ -42,6 +38,7 @@ const App = () => {
         </Row>
       </Container>
       <AppInfo />
+      <SoundPlayer />
     </>
   );
 };
